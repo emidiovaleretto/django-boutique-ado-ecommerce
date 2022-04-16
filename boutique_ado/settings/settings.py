@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # My apps
     'home',
+    'products',
 ]
 
 # DJANGO ALLAUTH SETTINGS
