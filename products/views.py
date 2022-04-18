@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.db.models import Q
+from django.db.models.functions import Lower
 from products.models.Models_Product import Product
 from products.models.Models_Category import Category
 
@@ -48,7 +49,7 @@ def list_all_products(request):
     context = {
         'products': products,
         'search_term': query,
-        'current_category': categories,
+        'current_categories': categories,
         'current_sorting': current_sorting
     }
     
