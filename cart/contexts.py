@@ -29,7 +29,7 @@ def cart_contents(request):
                 cart_items.append({
                     'item_id': item_id,
                     'product': product,
-                    'quantity': item_data,
+                    'quantity': quantity,
                     'size': size
                 })
 
@@ -48,7 +48,7 @@ def cart_contents(request):
         'total': total,
         'product_count': product_count,
         'delivery': delivery,
-        'free_delivery_threshold': settings.FREE_DELIVERY_THRESHOLD, 
+        'free_delivery_threshold': settings.FREE_DELIVERY_THRESHOLD,
         'free_delivery_delta': free_delivery_delta,
         'grand_total': grand_total
     }
