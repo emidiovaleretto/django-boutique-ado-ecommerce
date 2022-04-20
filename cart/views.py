@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 
 
 def view_cart(request):
@@ -39,32 +39,6 @@ def add_to_cart(request, item_id):
     return redirect(redirect_url)
 
 
-def remove_item_from_cart(request, item_id):
-    """ This function removes the item from the shopping cart. """
-
-    quantity = int(request.POST.get('quantity'))
-    size = None
-
-    if 'product_size' in request.POST:
-        size = request.POST['product_size']
-
-    cart = request.session.get('cart', {})
-
-    if size:
-        if quantity > 0:
-            cart[item_id]['items_by_size'][size] = quantity
-        else:
-            del cart[item_id]['items_by_size'][size]
-
-    else:
-        if quantity > 0:
-            cart[item_id] = quantity
-        else:
-            cart.pop[item_id]
-
-    request.session['cart'] = cart
-    return redirect(reverse('view_cart'))
-
 def adjust_quantity_to_cart(request, item_id):
     """ This function adjust the quantity of an specific product
         to the specific amount. """
@@ -82,12 +56,37 @@ def adjust_quantity_to_cart(request, item_id):
             cart[item_id]['items_by_size'][size] = quantity
         else:
             del cart[item_id]['items_by_size'][size]
-
+            if not cart[item_id]['items_by_size']:
+                cart.pop(item_id)
     else:
         if quantity > 0:
             cart[item_id] = quantity
         else:
-            cart.pop[item_id]
+            cart.pop(item_id)
 
     request.session['cart'] = cart
     return redirect(reverse('view_cart'))
+
+
+def remove_item_from_cart(request, item_id):
+    """ This function removes the item from the shopping cart. """
+
+    try:
+        size = None
+        if 'product_size' in request.POST:
+            size = request.POST['product_size']
+
+        cart = request.session.get('cart', {})
+
+        if size:
+            del cart[item_id]['items_by_size'][size]
+            if not cart[item_id]['items_by_size']:
+                cart.pop(item_id)
+        else:
+            cart.pop(item_id)
+
+        request.session['cart'] = cart
+        return HttpResponse(status=200)
+
+    except Exception as e:
+        return HttpResponse(status=500)
