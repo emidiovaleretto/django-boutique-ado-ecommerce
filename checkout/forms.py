@@ -19,8 +19,9 @@ class OrderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """
-        This function adds placeholders and classes, remove auto-generated
-        labels and set autofocus on first field.
+        This function overrides the init method of the form by
+        adding placeholders and classes as well as remove
+        auto-generated labels and set autofocus on first field.
         """
         super().__init__(*args, **kwargs)
         placeholders = {
