@@ -27,7 +27,7 @@ def add_to_cart(request, item_id):
             if size in cart[item_id]['items_by_size'].keys():
                 cart[item_id]['items_by_size'][size] += quantity
                 messages.success(
-                    request, f'Updated size {size.upper()} | {product.name} quantity to {bag[item_id]["items_by_size"][size]}.')
+                    request, f'Updated size {size.upper()} | {product.name} quantity to {cart[item_id]["items_by_size"][size]}.')
             else:
                 cart[item_id]['items_by_size'][size] = quantity
                 messages.success(
@@ -40,7 +40,7 @@ def add_to_cart(request, item_id):
         if item_id in list(cart.keys()):
             cart[item_id] += quantity
             messages.success(
-                request, f'Updated {product.name} quantity to {bag[item_id]}.')
+                request, f'Updated {product.name} quantity to {cart[item_id]}.')
         else:
             cart[item_id] = quantity
             messages.success(request, f'Added {product.name} to your bag.')
@@ -78,7 +78,7 @@ def adjust_quantity_to_cart(request, item_id):
         if quantity > 0:
             cart[item_id] = quantity
             messages.success(
-                request, f'Updated {product.name} quantity to {bag[item_id]}.')
+                request, f'Updated {product.name} quantity to {cart[item_id]}.')
         else:
             cart.pop(item_id)
             messages.success(request, f'Removed {product.name} from your bag.')
