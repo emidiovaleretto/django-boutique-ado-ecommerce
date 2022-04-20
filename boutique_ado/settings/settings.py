@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'checkout',
+
+    # Django Crispy Forms
+    'crispy_forms',
 ]
 
 # DJANGO ALLAUTH SETTINGS
@@ -66,8 +69,6 @@ AUTHENTICATION_BACKENDS = [
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -80,6 +81,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'boutique_ado.urls'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 TEMPLATES = [
     {
@@ -94,6 +97,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'cart.contexts.cart_contents',
             ],
+            'builtins': [
+                'crispy_forms.templatetags.crispy_forms_tags',
+                'crispy_forms.templatetags.crispy_forms_fields',
+            ]
         },
     },
 ]
