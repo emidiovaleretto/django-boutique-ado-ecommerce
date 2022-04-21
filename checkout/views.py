@@ -101,6 +101,7 @@ def checkout(request):
 
     return render(request, 'checkout/checkout.html', context=context)
 
+
 def checkout_success(request, order_number):
     """
     This function handles successful checkouts
@@ -109,8 +110,8 @@ def checkout_success(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
     messages.success(
         request, f'Order successfully processed! '
-        'Your order number is {order_number}. '
-        'A email confirmation will be sent to "{order.email}".')
+                 f'Your order number is {order_number}. '
+                 f'A email confirmation will be sent to "{order.email}".')
 
     if 'cart' in request.session:
         del request.session['cart']
