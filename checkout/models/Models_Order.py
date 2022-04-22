@@ -80,7 +80,6 @@ class OrderLineItem(models.Model):
         This function overrides the original save method to set
         the lineitem_total if it hasn't been set already.
         """
-        print(self.quantity)
         self.lineitem_total = self.product.price * self.quantity
         super().save(*args, **kwargs)
 
