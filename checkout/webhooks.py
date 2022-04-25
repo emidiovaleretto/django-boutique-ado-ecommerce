@@ -1,7 +1,6 @@
 import os
 import stripe
 
-from django.conf import settings
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -13,14 +12,16 @@ if os.path.exists("env.py"):
     import env
 
 
+@require_POST
+@csrf_exempt
 def webhook(request):
     """
     This method listens for webhooks from Stripe
     """
 
     # Setup credentials
-    wh_secret = settings.STRIPE_WH_SECRET
-    stripe.api_key = settings.STRIPE_SECRET_KEY
+    wh_secret = os.environ.get("STRIPE_WH_SECRET")
+    stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
     # Getting the webhook data and verify its signature
     payload = request.body
@@ -42,7 +43,7 @@ def webhook(request):
         )
 
     # Set up a webhook handler
-    handler = StripeWH_Handler(request)
+    handler = StripeWHookHandler(request)
 
     # Map webhook events to relevant handler functions
     event_map = {
@@ -59,4 +60,4 @@ def webhook(request):
 
     # Call the event handler with the event
     response = event_handler(event)
-    return
+    return response
