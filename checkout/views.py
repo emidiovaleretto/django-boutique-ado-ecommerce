@@ -26,7 +26,7 @@ def cache_checkout_data(request):
         stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
         stripe.PaymentIntent.modify(payment_id, metadata={
             'cart': json.dumps(request.session.get('cart', {})),
-            'save_info': request.POST.get('id-save-info'),
+            'save_info': request.POST.get('save_info'),
             'username': request.user,
         })
         return HttpResponse(status=200)
@@ -58,7 +58,13 @@ def checkout(request):
 
         order_form = OrderForm(form_data)
         if order_form.is_valid():
-            order = order_form.save()
+
+            order = order_form.save(commit=False)
+            payment_id = request.POST.get('client_secret').split('_secret')[0]
+            order.stripe_payment_id = payment_id
+            order.original_cart = json.dumps(cart)
+            order.save()
+
             for item_id, item_data in cart.items():
                 try:
                     product = get_object_or_404(Product, pk=item_id)
@@ -70,7 +76,8 @@ def checkout(request):
                         )
                         order_line_item.save()
                     else:
-                        for size, quantity in item_data['items_by_size'].items():
+                        for (size,
+                             quantity) in item_data['items_by_size'].items():
                             order_line_item = OrderLineItem(
                                 order=order,
                                 product=product,
@@ -79,16 +86,21 @@ def checkout(request):
                             )
                             order_line_item.save()
                 except Product.DoesNotExist:
-                    messages.error(request, "One of the products in your bag wasn't found in our database. "
-                                            "Please call us for assistance!")
+                    messages.error(request,
+                                   "One of the products in your bag wasn't "
+                                   "found in our database. "
+                                   "Please call us for assistance!")
                     order.delete()
                     return redirect(reverse('view_cart'))
 
             request.session['save_info'] = 'save-info' in request.POST
-            return redirect(reverse('checkout_success', args=[order.order_number]))
+            return redirect(
+                reverse('checkout_success', args=[order.order_number]))
         else:
-            messages.error(request, 'Something went wrong while trying to submit your form. '
-                                    'Please double check your information.')
+            messages.error(
+                request,
+                'Something went wrong while trying to submit your form. '
+                'Please double check your information.')
     else:
         cart = request.session.get('cart', {})
         if not cart:
@@ -132,9 +144,10 @@ def checkout_success(request, order_number):
     save_info = request.session.get('save_info')
     order = get_object_or_404(Order, order_number=order_number)
     messages.success(
-        request, f'Order successfully processed! '
-                 f'Your order number is {order_number}. '
-                 f'A email confirmation will be sent to "{order.email}".')
+        request,
+        f'Order successfully processed! '
+        f'Your order number is {order_number}. '
+        f'A email confirmation will be sent to "{order.email}".')
 
     if 'cart' in request.session:
         del request.session['cart']
