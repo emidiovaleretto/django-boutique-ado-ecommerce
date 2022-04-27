@@ -23,8 +23,9 @@ def profile(request):
                 request,
                 'Something went wrong while trying to update your profile. '
                 'Please try again later.')
+    else:
+        form = UserProfileForm(instance=profile)
 
-    form = UserProfileForm(instance=profile)
     orders = profile.orders.all()
     context = {
         'form': form,

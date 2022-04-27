@@ -77,7 +77,20 @@ def add_product(request):
     """
     This method adds a product to the store.
     """
-    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Successfully added product!')
+            return redirect(reverse('add_product'))
+        else:
+            messages.error(
+                request,
+                'Something went wrong while trying to add a product. '
+                'Please ensure the form is valid.')
+    else:
+        form = ProductForm()
+
     context = {
         'form': form,
     }
