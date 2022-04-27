@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.contrib import messages
-from products.models.Models_Product import Product
-from products.models.Models_Category import Category
+
+from .models.Models_Product import Product
+from .models.Models_Category import Category
+from .forms import ProductForm
 
 
 def list_all_products(request):
@@ -39,10 +41,12 @@ def list_all_products(request):
             query = request.GET['q']
 
             if not query:
-                messages.error(request, "You didn't enter any search criteria!")
+                messages.error(
+                    request, "You didn't enter any search criteria!")
                 return redirect(reverse('products'))
 
-            queries = Q(name__icontains=query) | Q(description__icontains=query)
+            queries = Q(name__icontains=query) | Q(
+                description__icontains=query)
             products = products.filter(queries)
 
     current_sorting = f'{sort}_{direction}'
@@ -53,7 +57,7 @@ def list_all_products(request):
         'current_categories': categories,
         'current_sorting': current_sorting
     }
-    
+
     return render(request, 'products/products.html', context=context)
 
 
@@ -67,3 +71,14 @@ def product_detail(request, product_id):
     }
 
     return render(request, 'products/product_detail.html', context=context)
+
+
+def add_product(request):
+    """
+    This method adds a product to the store.
+    """
+    form = ProductForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'products/add_product.html', context=context)
