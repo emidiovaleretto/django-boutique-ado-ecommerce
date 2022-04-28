@@ -46,6 +46,9 @@ INSTALLED_APPS = [
 
     # Django Crispy Forms
     'crispy_forms',
+
+    # Django Storages
+    'storages',
 ]
 
 # DJANGO ALLAUTH SETTINGS
