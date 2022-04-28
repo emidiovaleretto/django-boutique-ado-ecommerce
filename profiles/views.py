@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models.Models_Profile import UserProfile
@@ -7,6 +8,7 @@ from .forms import UserProfileForm
 from checkout.models import Order
 
 
+@login_required(login_url='/auth/login')
 def profile(request):
     """
     Display the user's profile

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.contrib import messages
@@ -73,10 +74,17 @@ def product_detail(request, product_id):
     return render(request, 'products/product_detail.html', context=context)
 
 
+@login_required(login_url='/auth/login')
 def add_product(request):
     """
     This method adds a product to the store.
     """
+    if not request.user.is_superuser:
+        messages.error(request,
+                       'It appears you tried to access a page that you do not have permission. \
+                        Please contact the store owner for assistance.')
+        return redirect(reverse('home'))
+
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -97,10 +105,17 @@ def add_product(request):
     return render(request, 'products/add_product.html', context=context)
 
 
+@login_required(login_url='/auth/login')
 def edit_product(request, product_id):
     """
     This method edits a product in the store.
     """
+    if not request.user.is_superuser:
+        messages.error(request,
+                       'It appears you tried to access a page that you do not have permission. \
+                        Please contact the store owner for assistance.')
+        return redirect(reverse('home'))
+
     product = get_object_or_404(Product, pk=product_id)
 
     if request.method == 'POST':
@@ -125,13 +140,19 @@ def edit_product(request, product_id):
     return render(request, 'products/edit_product.html', context=context)
 
 
+@login_required(login_url='/auth/login')
 def delete_product(request, product_id):
     """
     This method deletes a product in the store.
     """
+    if not request.user.is_superuser:
+        messages.error(request,
+                       'It appears you tried to access a page that you do not have permission. \
+                        Please contact the store owner for assistance.')
+        return redirect(reverse('home'))
+
     product = get_object_or_404(Product, pk=product_id)
     product.delete()
     messages.success(request, f'{product.name} deleted successfully!')
 
     return redirect(reverse('products'))
-
