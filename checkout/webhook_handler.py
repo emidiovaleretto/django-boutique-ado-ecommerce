@@ -26,7 +26,7 @@ class StripeWHookHandler:
         """
         customer_email = order.email
         from_email = settings.DEFAULT_FROM_EMAIL
-        
+
         subject = render_to_string(
             'checkout/confirmation_emails/confirmation_email_subject.txt',
             {'order': order})
