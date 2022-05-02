@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /auth/
+Disallow: /cart/
+Sitemap: https://yourboutiqueado.herokuapp.com/sitemap.xml
